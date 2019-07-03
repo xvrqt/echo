@@ -1,0 +1,10 @@
+[package]
+name = "echo"
+version = "0.0.1"
+authors = ["Amy Jie <git@xvrqt.com>"]
+about = "Static micro-blog generator"
+edition = "2018"
+
+[dependencies]
+clap = "2.33.0"
+user-error = "1.0.1"
