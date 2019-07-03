@@ -1,25 +1,33 @@
-use clap::{Arg, App, SubCommand};
 use user_error::UserError;
 
+mod cli;
 mod subcommands;
 
-fn main() {
-    let matches = App::new("Echo")
-                          .version("0.0.1")
-                          .author("Amy Jie <git@xvrqt.com>")
-                          .about("Write daily journals in the command line and turn them into a static web zone.")
-                          .subcommand(SubCommand::with_name("init")
-                                      .about("Creates a new Echo project from which you can write daily journal entries and generate a custom web zone.")
-                                      .arg(Arg::with_name("PROJECT_NAME")
-                                          .help("Specify the name of the new Echo project.")))
-                          .get_matches();
+/* Error Messages */
+const ERROR_FAILED_TO_RUN: &str = "Failed to run";
+const ERROR_SUBTLY_FAILED_TO_RUN: &str = "You can run 'echo --help' to see a list of all commands and options";
 
-    if let Some(matches) = matches.subcommand_matches("init") {
-        let project_name = matches.value_of("PROJECT_NAME").unwrap_or("echo");
-        println!("Project Name: {}", project_name);
-        subcommands::init::run();
-    } else {
-        let ue = UserError::simple("Nya");
-        ue.print_and_exit();
+fn main() {
+
+
+    match cli::parse().subcommand() {
+        ("init", Some(m)) => {
+            match subcommands::init::run(m) {
+                Ok(s) => println!("Created new projext in: {}", s),
+                Err(e) => e.print_and_exit()
+            }
+        },
+        (_, None) => {
+            UserError::hardcoded(ERROR_FAILED_TO_RUN,
+                                 &["No command provided"],
+                                 &[ERROR_SUBTLY_FAILED_TO_RUN])
+                                .print_and_exit();
+        },
+        _ => {
+            UserError::hardcoded(ERROR_FAILED_TO_RUN,
+                                 &["Unknown command provided"],
+                                 &[ERROR_SUBTLY_FAILED_TO_RUN])
+                                 .print_and_exit();
+        }
     }
 }
