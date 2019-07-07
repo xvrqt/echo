@@ -48,6 +48,16 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
             )",
             NO_PARAMS,
     )?;
+    
+    /*Insert a starter post */
+    conn.execute(
+            "INSERT INTO echo (created, edited, post)
+             VALUES (
+                strftime('%s','now'),
+                strftime('%s','now'),
+                (?1)
+            )",
+    &["It is entirely unfortunate you have come here."])?;
 
     Ok(String::from(project_name))
 }
