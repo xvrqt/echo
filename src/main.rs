@@ -1,6 +1,8 @@
 use user_error::UserError;
 
+mod db;
 mod cli;
+mod config;
 mod subcommands;
 
 /* Error Messages */
@@ -9,11 +11,16 @@ const ERROR_SUBTLY_FAILED_TO_RUN: &str = "You can run 'echo --help' to see a lis
 
 fn main() {
 
-
     match cli::parse().subcommand() {
         ("init", Some(m)) => {
             match subcommands::init::run(m) {
-                Ok(s) => println!("Created new projext in: {}", s),
+                Ok(s) => println!("Created new project in: {}", s),
+                Err(e) => e.print_and_exit()
+            }
+        },
+        ("build", Some(m)) => {
+            match subcommands::build::run(m) {
+                Ok(s) => println!("Built project: {}", s),
                 Err(e) => e.print_and_exit()
             }
         },

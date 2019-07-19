@@ -9,6 +9,10 @@ pub fn parse<'a>() -> ArgMatches<'a> {
             .about("Creates a new Echo project from which you can write daily journal entries and generate a custom web zone.")
             .arg(Arg::with_name("PROJECT_NAME")
                 .help("Specify the name of the new Echo project.")))
+        .subcommand(SubCommand::with_name("build")
+            .about("Run inside a Echo project to generate a static web blog from your entries.")
+            .arg(Arg::with_name("PATH")
+                .help("Specify the name of the new Echo project.")))
         .get_matches()
 }
 

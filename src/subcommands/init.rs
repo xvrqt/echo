@@ -1,11 +1,16 @@
+/* Standard Library */
 use std::fs;
 use std::path::Path;
 use std::result::Result;
 
-use clap::{Arg, ArgMatches, App, SubCommand};
-use rusqlite::{Connection, Result as SQLResult, NO_PARAMS};
-
+/* Third Party Libraries */
+use clap::ArgMatches;
+use rusqlite::{Connection, NO_PARAMS};
 use user_error::UserError;
+
+/* Internal Modules */
+use crate::db;
+use crate::config::EchoConfig;
 
 /* Error Messages */
 const SUBTLE_HELP:   &str = "Run 'echo init --help' to list all options";
@@ -35,29 +40,40 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
         fs::create_dir_all(dir)?;
     }
 
+
+    /* Create the config JSON */
+    /* Create and open the file */
+
+    /* Set up the config */
+    let config = EchoConfig {
+        title: String::from(project_name),
+        ..Default::default()
+    };
+
+    /* Serialize to a pretty print formatted string */
+    let config = serde_json::to_string_pretty(&config).expect("Failed conversion of config struct to pretty print JSON string");
+
+    /* Write to the file */
+    let config_path = format!("{}/config.json", project_name);
+    fs::write(&config_path, config)?;
+
     /* Setup the SQLite database */
     let db_file_path = format!("{}/echo.db", project_name);
     let conn = Connection::open(db_file_path)?;
 
+    /* Create the posts table */
     conn.execute(
-            "CREATE TABLE IF NOT EXISTS echo (
+            "CREATE TABLE IF NOT EXISTS posts (
                 id      integer primary key,
                 created integer key,
                 edited  integer key,
-                post    text not null
+                text    text not null
             )",
             NO_PARAMS,
     )?;
     
-    /*Insert a starter post */
-    conn.execute(
-            "INSERT INTO echo (created, edited, post)
-             VALUES (
-                strftime('%s','now'),
-                strftime('%s','now'),
-                (?1)
-            )",
-    &["It is entirely unfortunate you have come here."])?;
+    /* Insert a starter post */
+    db::new_post(conn, "it is entirely unfortunate you have come here.")?;
 
     Ok(String::from(project_name))
 }
