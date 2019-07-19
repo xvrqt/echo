@@ -4,3 +4,7 @@
 # Rusty Stuff
 /target
 **/*.rs.bk
+
+# Accidental Testing Cruft
+echo/
+
