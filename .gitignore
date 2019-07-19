@@ -8,3 +8,6 @@
 # Accidental Testing Cruft
 echo/
 
+# VIM Cruft
+**/*.swp
+
