@@ -24,7 +24,7 @@ const ERROR_SUMMARY: &str = "Failed to build project";
 /* lazy_static_include_str!(HEADER, "template/header.html"); */
 /* lazy_static_include_str!(FOOTER, "template/footer.html"); */
 
-/* Build a static web blog from an existing Echo */
+/* Build a static web blog from an existing Echo project */
 pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     let path = args.value_of("PATH").unwrap_or(".");
     let project = Path::new(path);
@@ -34,6 +34,8 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
                                     &[&reason],
                                     &[]));
     }
+
+    
 
     Ok(String::from("u gay"))
 }

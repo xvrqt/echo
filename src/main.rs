@@ -2,7 +2,9 @@ use user_error::UserError;
 
 mod db;
 mod cli;
+mod post;
 mod config;
+mod context;
 mod subcommands;
 
 /* Error Messages */
