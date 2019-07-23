@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+            <!-- Title and Description -->
+                <title>{{ config.title }}</title>
+                <meta name="description" content="{{ config.description }}">
+
+                <!-- How to display the page -->
+                <meta charset="utf-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+                <!-- Our single style sheet -->
+                <style>
+                    {% include "styles.css" %}
+                </style>
+        {% endblock head %}
+    </head>
+    <body>
+        <div id="container">
+            <!-- Header -->
+            {% block header %}
+                <h1 id="title">{{ config.title }}</h1>
+                <h2 id="subtitle">{{ config.author }} · {{ num_posts }} post{{ num_posts | pluralize }}</h2>
+                <hr />
+            {% endblock header %}
+
+            <!-- Posts -->
+            {% for post in posts %}
+                <div class="date">{{ post.created | date(format="%h %e") }}{{ date_suffix(timestamp=post.created) }}</div>
+                <div class="post">{{ post.text }}</div>
+            {% endfor %}
+        </div>
+        <div id="footer">
+            {% block footer %}
+                powered by <a href="https://git.xvrqt.com/xvrqt/echo">echo</a>
+            {% endblock footer %}
+        </div>
+    </body>
+</html>

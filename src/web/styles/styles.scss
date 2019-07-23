@@ -1,0 +1,85 @@
+/* Global styles can be included in this sheet. If you want to break up your 
+ * styles, create SCSS files pre-pended with an '_' in the styles/ directory
+ * and import them here.
+ * 
+ * Styling for individual pages should be reside as siblings to their HTML in 
+ * pages/ directory
+*/
+@import "reset";
+
+html { 
+	height:100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
+a {
+	color: #BE6565;
+	cursor: pointer;
+	text-decoration: none;
+
+	&:visited {
+		color: #A15656;
+	}
+}
+
+#container {
+	margin: 0 auto;
+	padding-top: 25px;
+
+	@media (max-width: 400px) {
+		padding-top: 10px;
+	}
+
+	min-width: 320px;
+	max-width: 480px;
+
+	color: #4A4A4A;
+	text-align: center;
+	letter-spacing: 0;
+	font-family: HelveticaNeue-Bold, Helvitca;
+
+	h1 {
+		font-size: 48px;
+		line-height: 62px;
+		font-family: Krungthep;
+	}
+
+	h2 {
+		font-size: 18px;
+		line-height: 22px;
+	}
+
+	.date {
+		margin: 5px auto;
+	}
+
+	.post {
+		border: 1px solid #CCC9C9;
+
+		@media (max-width: 400px) {
+			border-left: none;
+			border-right: none;
+		}
+		padding: 8px;
+		background: #E7E7E7;
+
+		font-size: 14px;
+		text-align: justify;
+		font-family: HelveticaNeue, Helvitca;
+	}
+}
+
+#footer {
+	margin-top: 25px;
+
+	color: #4A4A4A;
+	font-size: 14px;
+	text-align: center;
+	letter-spacing: 0;
+	font-family: Krungthep;
+}

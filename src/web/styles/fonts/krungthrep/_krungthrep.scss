@@ -1,0 +1,13 @@
+@import "../../variables";
+
+@font-face {
+  font-family: "Krungthep";
+  
+  src: url("#{$font-path}/krungthrep/krungthrep.eot");
+
+  src: url("#{$font-path}/krungthrep/krungthrep_ie9.eot") format("embedded-opentype"),
+  url("#{$font-path}/krungthrep/krungthrep.woff2")        format("woff2"),
+  url("#{$font-path}/krungthrep/krungthrep.woff")         format("woff"),
+  url("#{$font-path}/krungthrep/krungthrep.ttf")          format("truetype"),
+  url("#{$font-path}/krungthrep/krungthrep.svg")          format("svg");
+}

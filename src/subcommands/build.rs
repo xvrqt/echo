@@ -1,42 +1,40 @@
 /* Standard Library */
 use std::fs;
-use std::path::Path;
 use std::result::Result;
+use std::collections::HashMap;
 
 /* Third Party Libraries */
+use tera::{GlobalFn, Value, Tera};
 use clap::ArgMatches;
-use rusqlite::{Connection, NO_PARAMS};
 use user_error::UserError;
-
-#[macro_use]
-use lazy_static_include;
 
 /* Internal Modules */
 use crate::db;
-
-/* Error Messages */
-const ERROR_SUMMARY: &str = "Failed to build project";
-
-/* Import the files in the template as strings */
-/* lazy_static_include_str!(HEAD,   "template/head.html"); */
-/* lazy_static_include_str!(POST,   "template/post.html"); */
-/* lazy_static_include_str!(INDEX,  "template/index.html"); */
-/* lazy_static_include_str!(HEADER, "template/header.html"); */
-/* lazy_static_include_str!(FOOTER, "template/footer.html"); */
+use crate::web::templates;
+use crate::utility;
+use crate::context::EchoContext;
 
 /* Build a static web blog from an existing Echo project */
 pub fn run(args: &ArgMatches) -> Result<String, UserError> {
-    let path = args.value_of("PATH").unwrap_or(".");
-    let project = Path::new(path);
-    if !project.is_dir() {
-        let reason = format!("{} is not a directory", path);
-        return Err(UserError::hardcoded(ERROR_SUMMARY,
-                                    &[&reason],
-                                    &[]));
-    }
-
+    /* Get the project path to build */
+    let (config, connection) = utility::get_project(args.value_of("PATH"))?;
     
+    /* Context for generating the Tera templates */
+    let mut context = EchoContext {
+        config,
+        ..Default::default()
+   };
 
-    Ok(String::from("u gay"))
+    /* Initialize the context */
+    context.posts = db::get_latest(&connection)?;
+    context.num_posts = db::num_posts(&connection)?;
+
+    /* Compile Tera templates */
+    let index = templates::compile_index(&context)?;
+
+    /* Write index.html to dist/ */
+    fs::write("dist/index.html", &index)?;
+
+    Ok(context.config.title)
 }
 

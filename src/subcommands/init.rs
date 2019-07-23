@@ -1,5 +1,6 @@
 /* Standard Library */
 use std::fs;
+use std::env;
 use std::path::Path;
 use std::result::Result;
 
@@ -12,37 +13,29 @@ use user_error::UserError;
 use crate::db;
 use crate::config::EchoConfig;
 
-/* Error Messages */
-const SUBTLE_HELP:   &str = "Run 'echo init --help' to list all options";
-const ERROR_SUMMARY: &str = "Failed to initialize project";
-
 /* Creates a new Echo project */
 pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     let project_name = args.value_of("PROJECT_NAME").unwrap_or("echo");
-    let directories = vec![format!("{}",            project_name),
-                           format!("{}/src",        project_name),
-                           format!("{}/src/images", project_name),
-                           format!("{}/dist",       project_name)];
+    let project_path = Path::new(project_name);
     
     /* Check if the project directory exist, create_dir_all is not returning an
        error if it already exists like it should so this check is necessary.
     */
-    if Path::new(project_name).exists() {
-        let reason = format!("Directory '{}' already exists", project_name);
-        return Err(UserError::hardcoded(ERROR_SUMMARY,
-                             &[&reason],
-                             &["Remove this directory or pick a different name",
-                                SUBTLE_HELP]))
+    if project_path.exists() {
+        let summary = format!("Directory '{}' already exists", project_name);
+        return Err(UserError::hardcoded(&summary,
+                             &[],
+                             &["Remove this directory or pick a different name"]))
+    } else {
+        fs::create_dir(project_name)?;
+        env::set_current_dir(project_path)?;
     }
 
     /* Setup the project directory */
+    let directories = vec!["src", "src/images", "dist"];
     for dir in &directories {
         fs::create_dir_all(dir)?;
     }
-
-
-    /* Create the config JSON */
-    /* Create and open the file */
 
     /* Set up the config */
     let config = EchoConfig {
@@ -54,12 +47,10 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     let config = serde_json::to_string_pretty(&config).expect("Failed conversion of config struct to pretty print JSON string");
 
     /* Write to the file */
-    let config_path = format!("{}/config.json", project_name);
-    fs::write(&config_path, config)?;
+    fs::write("config.json", config)?;
 
     /* Setup the SQLite database */
-    let db_file_path = format!("{}/echo.db", project_name);
-    let conn = Connection::open(db_file_path)?;
+    let conn = db::connect()?;
 
     /* Create the posts table */
     conn.execute(

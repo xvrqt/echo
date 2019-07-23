@@ -2,28 +2,36 @@ use user_error::UserError;
 
 mod db;
 mod cli;
+mod web;
 mod post;
 mod config;
 mod context;
+mod utility;
 mod subcommands;
 
-/* Error Messages */
-const ERROR_FAILED_TO_RUN: &str = "Failed to run";
-const ERROR_SUBTLY_FAILED_TO_RUN: &str = "You can run 'echo --help' to see a list of all commands and options";
-
 fn main() {
+
+    /* Error Messages */
+    const ERROR_FAILED_TO_RUN: &str = "Failed to run";
+    const ERROR_SUBTLY_FAILED_TO_RUN: &str = "You can run 'echo --help' to see a list of all commands and options";
 
     match cli::parse().subcommand() {
         ("init", Some(m)) => {
             match subcommands::init::run(m) {
                 Ok(s) => println!("Created new project in: {}", s),
-                Err(e) => e.print_and_exit()
+                Err(mut e) => {
+                    e.update_and_push_summary("Failed to initialize project");
+                    e.print_and_exit()
+                }
             }
         },
         ("build", Some(m)) => {
             match subcommands::build::run(m) {
                 Ok(s) => println!("Built project: {}", s),
-                Err(e) => e.print_and_exit()
+                Err(mut e) => {
+                    e.update_and_push_summary("Failed to build Echo project");
+                    e.print_and_exit()
+                }
             }
         },
         (_, None) => {

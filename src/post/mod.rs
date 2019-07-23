@@ -1,9 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, Debug)]
 pub struct EchoPost {
-    pub created: u64,
-    pub edited: u64,
+    pub created: i64,
+    pub edited: i64,
     pub text: String
 }
 
