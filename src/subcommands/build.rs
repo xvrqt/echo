@@ -1,10 +1,8 @@
 /* Standard Library */
 use std::fs;
 use std::result::Result;
-use std::collections::HashMap;
 
 /* Third Party Libraries */
-use tera::{GlobalFn, Value, Tera};
 use clap::ArgMatches;
 use user_error::UserError;
 
@@ -37,4 +35,5 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
 
     Ok(context.config.title)
 }
+
 

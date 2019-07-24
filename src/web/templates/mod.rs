@@ -1,16 +1,8 @@
-/* Standard Library */
-use std::fs;
-use std::result::Result;
-use std::collections::HashMap;
-
 /* Third Party Libraries */
 use tera::{GlobalFn, Value, Tera};
-use clap::ArgMatches;
 use user_error::UserError;
 
 /* Internal Modules */
-use crate::db;
-use crate::utility;
 use crate::context::EchoContext;
 
 /* Returns a Value::String with the suffix for a date ending */
