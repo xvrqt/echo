@@ -25,6 +25,15 @@ fn main() {
                 }
             }
         },
+        ("new", Some(m)) => {
+            match subcommands::new::run(m) {
+                Ok(_s) => println!("Created new Echo entry."),
+                Err(mut e) => {
+                    e.update_and_push_summary("Failed to create new entry");
+                    e.print_and_exit()
+                }
+            }
+        },
         ("build", Some(m)) => {
             match subcommands::build::run(m) {
                 Ok(s) => println!("Built project: {}", s),

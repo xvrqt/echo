@@ -6,7 +6,7 @@ use std::result::Result;
 
 /* Third Party Libraries */
 use clap::ArgMatches;
-use rusqlite::{Connection, NO_PARAMS};
+use rusqlite::{NO_PARAMS};
 use user_error::UserError;
 
 /* Internal Modules */
