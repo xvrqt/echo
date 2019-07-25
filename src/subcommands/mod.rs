@@ -3,4 +3,5 @@ pub mod new;
 pub mod init;
 pub mod edit;
 pub mod build;
+pub mod delete;
 

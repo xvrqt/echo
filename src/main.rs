@@ -36,9 +36,18 @@ fn main() {
         },
         ("edit", Some(m)) => {
             match subcommands::edit::run(m) {
-                Ok(s) => println!("Updated Echo entry #{}", s),
+                Ok(s) => println!("Updated Echo entry #{}", s + 1),
                 Err(mut e) => {
                     e.update_and_push_summary("Failed to modify entry");
+                    e.print_and_exit()
+                }
+            }
+        },
+        ("delete", Some(m)) => {
+            match subcommands::delete::run(m) {
+                Ok(s) => println!("Removed Echo entry #{}", s + 1),
+                Err(mut e) => {
+                    e.update_and_push_summary("Failed to delete entry");
                     e.print_and_exit()
                 }
             }

@@ -48,7 +48,7 @@ pub fn get_post(c: &Connection, id: isize) -> Result<EchoPost, UserError> {
     let (posts, errors): (MappedRows, MappedRows) = results.partition(|r| r.is_ok());
 
     /* Check for errors and concatenate into a single UserError */
-    if errors.len() > 0 {
+    if !errors.is_empty() {
         let error = format!("Experienced an error in {} posts", errors.len());
         let mut ue = UserError::hardcoded("Failed to fetch latest posts",
                                     &[&error],
@@ -68,6 +68,18 @@ pub fn get_post(c: &Connection, id: isize) -> Result<EchoPost, UserError> {
     }
 
     Ok(posts[0].clone())
+}
+
+/* Updates and existing post */
+pub fn delete_post(c: &Connection, id: isize) -> Result<(), UserError> {
+    let query = "DELETE \
+                    FROM posts \
+                    WHERE \
+                        id = ?";
+    let mut stmt = c.prepare(&query)?;
+    stmt.execute(&[&id])?;
+
+    Ok(())
 }
 
 /* Updates and existing post */
@@ -104,7 +116,7 @@ pub fn get_latest(c: &Connection) -> Result<Vec<EchoPost>, UserError> {
     let (posts, errors): (MappedRows, MappedRows) = results.partition(|r| r.is_ok());
 
     /* Check for errors and concatenate into a single UserError */
-    if errors.len() > 0 {
+    if !errors.is_empty() {
         let error = format!("Experienced an error in {} posts", errors.len());
         let mut ue = UserError::hardcoded("Failed to fetch latest posts",
                                     &[&error],
