@@ -1,7 +1,7 @@
 /* Collection of useful database functions to keep things DRY */
 
 /* Third Party Libraries */
-use rusqlite::{Connection, NO_PARAMS};
+use rusqlite::{Connection, NO_PARAMS, ToSql};
 use user_error::UserError;
 
 use crate::post::EchoPost;
@@ -27,12 +27,75 @@ pub fn new_post(c: Connection, text: &str) -> Result<(), UserError> {
     Ok(())
 }
 
+/* Returns and EchoPost of the given ID */
+pub fn get_post(c: &Connection, id: isize) -> Result<EchoPost, UserError> {
+    type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
+
+    let s = &format!("SELECT * \
+                      FROM posts \
+                      ORDER BY created DESC \
+                      LIMIT 1 \
+                      OFFSET {}", id);
+    let mut stmt = c.prepare(&s)?;
+
+    let results = stmt.query_map(NO_PARAMS, |row| Ok(EchoPost {
+        id:      row.get(0)?,
+        created: row.get(1)?,
+        edited:  row.get(2)?,
+        text:    row.get(3)?
+    }))?;
+
+    let (posts, errors): (MappedRows, MappedRows) = results.partition(|r| r.is_ok());
+
+    /* Check for errors and concatenate into a single UserError */
+    if errors.len() > 0 {
+        let error = format!("Experienced an error in {} posts", errors.len());
+        let mut ue = UserError::hardcoded("Failed to fetch latest posts",
+                                    &[&error],
+                                    &[]);
+        for error in errors {
+            let error = error.err().unwrap().to_string();
+            ue.add_reason(&error);
+        }
+        return Err(ue);
+    }
+
+    /* Unwrap the posts */
+    let posts: Vec<EchoPost> = posts.into_iter().map(|p| p.unwrap()).collect();
+    if posts.len() != 1 {
+        let summary = format!("Failed to find post #{}", id);
+        return Err(UserError::simple(&summary));
+    }
+
+    Ok(posts[0].clone())
+}
+
+/* Updates and existing post */
+pub fn update_post(c: &Connection, post: EchoPost) -> Result<(), UserError> {
+    let query = "UPDATE posts \
+                    SET \
+                        created = ?, \
+                        edited  = ?, \
+                        text    = ? \
+                    WHERE \
+                        id = ?";
+    let mut stmt = c.prepare(&query)?;
+    let values: [&ToSql; 4] = [&post.created, 
+                               &post.edited,
+                               &post.text, 
+                               &post.id];
+    stmt.execute(&values)?;
+
+    Ok(())
+}
+
 /* Returns the latest 10 posts */
 pub fn get_latest(c: &Connection) -> Result<Vec<EchoPost>, UserError> {
     type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
 
     let mut stmt = c.prepare("SELECT * FROM posts ORDER BY created DESC")?;
     let results = stmt.query_map(NO_PARAMS, |row| Ok(EchoPost {
+        id:      row.get(0)?,
         created: row.get(1)?,
         edited:  row.get(2)?,
         text:    row.get(3)?

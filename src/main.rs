@@ -27,9 +27,18 @@ fn main() {
         },
         ("new", Some(m)) => {
             match subcommands::new::run(m) {
-                Ok(_s) => println!("Created new Echo entry."),
+                Ok(s) => println!("Created new Echo entry: {}", &s[..15]),
                 Err(mut e) => {
                     e.update_and_push_summary("Failed to create new entry");
+                    e.print_and_exit()
+                }
+            }
+        },
+        ("edit", Some(m)) => {
+            match subcommands::edit::run(m) {
+                Ok(s) => println!("Updated Echo entry #{}", s),
+                Err(mut e) => {
+                    e.update_and_push_summary("Failed to modify entry");
                     e.print_and_exit()
                 }
             }
