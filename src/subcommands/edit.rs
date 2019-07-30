@@ -10,7 +10,7 @@ use crate::{
 };
     
 /* Edits an existing post in an Echo Project */
-pub fn run(args: &ArgMatches) -> Result<String, UserError> {
+pub fn run(args: &ArgMatches) -> Result<isize, UserError> {
     /* Get the project path to build */
     let (_, connection) = utility::get_project(args.value_of("PATH"))?;
 
@@ -53,6 +53,6 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     /* Regenerate the blag */
     build::run(args)?;
     
-    Ok(post_id.to_string())
+    Ok(post_id)
 }
 

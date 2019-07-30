@@ -27,7 +27,7 @@ fn main() {
         },
         ("new", Some(m)) => {
             match subcommands::new::run(m) {
-                Ok(s) => println!("Created new Echo entry: {}", &s[..15]),
+                Ok(s) => println!("Created new Echo entry: {}...", &s[..15]),
                 Err(mut e) => {
                     e.update_and_push_summary("Failed to create new entry");
                     e.print_and_exit()
