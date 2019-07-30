@@ -41,14 +41,8 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
                             })
                         })?;
 
-    /* Get the post content for editing */
-    let mut post = db::get_post(&connection, post_id)?; 
-
-    /* Open a text editor for the user to write a post in */
-    post.text = scrawl::with(&post.text)?;
-
     /* Commit the post the DB */
-    db::update_post(&connection, post)?;
+    db::delete_post(&connection, post_id)?;
     
     /* Regenerate the blag */
     build::run(args)?;

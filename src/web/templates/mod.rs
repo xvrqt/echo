@@ -8,7 +8,7 @@ use crate::context::EchoContext;
 /* Returns a Value::String with the suffix for a date ending */
 fn date_suffix(n: i64) -> Result<Value, tera::Error> {
     if  11 <= n && n <= 13 { 
-        return Ok(Value::String(String::from("th")))
+        Ok(Value::String(String::from("th")))
     } else {
         let n = n % 10;
         match n {
