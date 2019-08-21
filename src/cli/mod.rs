@@ -1,4 +1,4 @@
-use clap::{Arg, ArgMatches, App, SubCommand};
+use clap::{App, Arg, ArgMatches, SubCommand};
 
 pub fn parse<'a>() -> ArgMatches<'a> {
     App::new("Echo")
@@ -29,6 +29,15 @@ pub fn parse<'a>() -> ArgMatches<'a> {
             .about("Run inside a Echo project to generate a static web blog from your entries.")
             .arg(Arg::with_name("PATH")
                 .help("Specify the path of the Echo project you wish to build.")))
+        .subcommand(SubCommand::with_name("update")
+            .about("Run inside a Echo project to update your web zone's configuration.")
+            .arg(Arg::with_name("FIELD")
+                .help("Specify which field of the config you wish to modify.")
+                .required(true))
+            .arg(Arg::with_name("VALUE")
+                .help("The value with which to update the field.")
+                .required(true))
+            .arg(Arg::with_name("PATH")
+                .help("Specify the path of the Echo project you wish to build.")))
         .get_matches()
 }
-

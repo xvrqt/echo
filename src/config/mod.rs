@@ -10,17 +10,7 @@ use user_error::UserError;
 pub struct EchoConfig {
     pub title: String,
     pub author: String,
-    pub description: String
-}
-
-impl Default for EchoConfig {
-    fn default() -> Self {
-        EchoConfig {
-            title: String::from("echo"),
-            author: String::from("anon"),
-            description: String::from("Echo - a microblog generator for your web zone")
-        }
-    }
+    pub description: String,
 }
 
 impl EchoConfig {
@@ -33,9 +23,7 @@ impl EchoConfig {
             Ok(file) => file,
             Err(error) => {
                 let error = error.to_string();
-                return Err(UserError::hardcoded(ERROR_SUMMARY,
-                                            &[&error],
-                                            &[]));
+                return Err(UserError::hardcoded(ERROR_SUMMARY, &[&error], &[]));
             }
         };
 
@@ -45,9 +33,11 @@ impl EchoConfig {
             Ok(config) => config,
             Err(error) => {
                 let error = error.to_string();
-                return Err(UserError::hardcoded(ERROR_SUMMARY,
-                                            &["Failed to parse config.json", &error],
-                                            &["Make sure config.json is valid for an Echo project."]));
+                return Err(UserError::hardcoded(
+                    ERROR_SUMMARY,
+                    &["Failed to parse config.json", &error],
+                    &["Make sure config.json is valid for an Echo project."],
+                ));
             }
         };
 
@@ -55,3 +45,13 @@ impl EchoConfig {
     }
 }
 
+/* TRAITS */
+impl Default for EchoConfig {
+    fn default() -> Self {
+        EchoConfig {
+            title: String::from("echo"),
+            author: String::from("anon"),
+            description: String::from("Echo - a microblog generator for your web zone"),
+        }
+    }
+}
