@@ -26,9 +26,13 @@
             {% endblock header %}
 
             <!-- Posts -->
-            {% for post in posts %}
-                <div class="date">{{ post.created | date(format="%h %e") }}{{ date_suffix(timestamp=post.created) }}</div>
+            {% for post_list in posts %}
+                {% for post in post_list %}
+                {% if loop.index == 1 %}
+                    <div class="date">{{ post.created | date(format="%h %e") }}{{ date_suffix(timestamp=post.created) }}</div>
+                {% endif %}
                 <div class="post">{{ post.text }}</div>
+                {% endfor %}
             {% endfor %}
         </div>
         <div id="footer">

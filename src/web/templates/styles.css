@@ -107,6 +107,7 @@ a:visited {
 }
 #container .post {
   border: 1px solid #CCC9C9;
+  margin: 3px;
   padding: 8px;
   background: #E7E7E7;
   font-size: 14px;

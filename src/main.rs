@@ -24,7 +24,7 @@ fn main() {
             }
         },
         ("new", Some(m)) => match subcommands::new::run(m) {
-            Ok(s) => println!("Created new Echo entry: {}...", &s[..15]),
+            Ok(s) => println!("Created new Echo entry: {}...", &s),
             Err(mut e) => {
                 e.update_and_push_summary("Failed to create new entry");
                 e.print_and_exit()
@@ -46,6 +46,13 @@ fn main() {
         },
         ("update", Some(m)) => match subcommands::update::run(m) {
             Ok(s) => println!("Updated field {}", s),
+            Err(mut e) => {
+                e.update_and_push_summary("Failed to update config");
+                e.print_and_exit()
+            }
+        },
+        ("log", Some(m)) => match subcommands::log::run(m) {
+            Ok(_) => (),
             Err(mut e) => {
                 e.update_and_push_summary("Failed to update config");
                 e.print_and_exit()

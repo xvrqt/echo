@@ -19,5 +19,7 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     /* Regenerate the blag */
     build::run(args)?;
 
-    Ok(String::from(&post))
+    let summary = String::from(&post);
+    let summary = summary.chars().take(15).collect();
+    Ok(summary)
 }

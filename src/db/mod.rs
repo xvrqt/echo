@@ -27,7 +27,6 @@ pub fn new_post(c: Connection, text: &str) -> Result<(), UserError> {
 
     Ok(())
 }
-
 /* Returns and EchoPost of the given ID */
 pub fn get_post(c: &Connection, id: isize) -> Result<EchoPost, UserError> {
     type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
@@ -103,7 +102,7 @@ pub fn update_post(c: &Connection, post: EchoPost) -> Result<(), UserError> {
 }
 
 /* Returns the latest 10 posts */
-pub fn get_latest(c: &Connection) -> Result<Vec<EchoPost>, UserError> {
+pub fn get_latest(c: &Connection) -> Result<Vec<Vec<EchoPost>>, UserError> {
     type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
 
     let mut stmt = c.prepare("SELECT * FROM posts ORDER BY created DESC")?;
@@ -130,8 +129,21 @@ pub fn get_latest(c: &Connection) -> Result<Vec<EchoPost>, UserError> {
     }
 
     /* Unwrap the posts */
-    let posts = posts.into_iter().map(|p| p.unwrap()).collect();
-    Ok(posts)
+    let posts: Vec<EchoPost> = posts.into_iter().map(|p| p.unwrap()).collect();
+    let mut vov_posts: Vec<Vec<EchoPost>> = Vec::with_capacity(posts.len());
+    let mut current_day = 0;
+    for post in posts {
+        let day_created = post.created / (24 * 60 * 60);
+        if day_created != current_day {
+            vov_posts.push(Vec::new());
+            current_day = day_created;
+        }
+        if let Some(v) = vov_posts.last_mut() {
+            v.push(post);
+        }
+    }
+
+    Ok(vov_posts)
 }
 
 /* Returns the number of posts */

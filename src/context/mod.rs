@@ -7,5 +7,5 @@ use crate::post::EchoPost;
 pub struct EchoContext {
     pub config: EchoConfig,
     pub num_posts: isize,
-    pub posts: Vec<EchoPost>,
+    pub posts: Vec<Vec<EchoPost>>,
 }

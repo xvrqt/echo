@@ -1,6 +1,7 @@
 /* Expose the run commands to the main function */
 
 pub mod new;
+pub mod log;
 pub mod init;
 pub mod edit;
 pub mod build;
