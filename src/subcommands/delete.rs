@@ -41,6 +41,8 @@ pub fn run(args: &ArgMatches) -> Result<isize, UserError> {
             })
     })?;
 
+    println!("{}", post_id);
+
     /* Commit the post the DB */
     db::delete_post(&connection, post_id)?;
 

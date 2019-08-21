@@ -77,8 +77,8 @@ pub fn get_post(c: &Connection, id: isize) -> Result<EchoPost, UserError> {
 pub fn delete_post(c: &Connection, id: isize) -> Result<(), UserError> {
     let query = "DELETE \
                  FROM posts \
-                 WHERE \
-                 id = ?";
+                 ORDER BY created DESC \
+                 LIMIT 1 OFFSET ?";
     let mut stmt = c.prepare(&query)?;
     stmt.execute(&[&id])?;
 

@@ -27,11 +27,12 @@
 
             <!-- Posts -->
             {% for post_list in posts %}
+                {% set first_post = loop.index == 1 %}
                 {% for post in post_list %}
-                {% if loop.index == 1 %}
-                    <div class="date">{{ post.created | date(format="%h %e") }}{{ date_suffix(timestamp=post.created) }}</div>
-                {% endif %}
-                <div class="post">{{ post.text }}</div>
+                    {% if loop.index == 1 and not first_post %}
+                        <div class="date">{{ post.created | date(format="%h %e") }}{{ date_suffix(timestamp=post.created) }}</div>
+                    {% endif %}
+                    <div class="post">{{ post.text }}</div>
                 {% endfor %}
             {% endfor %}
         </div>
