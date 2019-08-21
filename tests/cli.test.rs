@@ -3,5 +3,5 @@ extern crate echo;
 
 #[test]
 fn test_no_path() {
-	//
+    //
 }

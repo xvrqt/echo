@@ -3,12 +3,8 @@ use clap::ArgMatches;
 use user_error::UserError;
 
 /* Internal Modules */
-use crate::{
-    db,
-    utility,
-    subcommands::build,
-};
-    
+use crate::{db, subcommands::build, utility};
+
 /* Adds a new post to an Echo Project */
 pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     /* Get the project path to build */
@@ -19,10 +15,9 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
 
     /* Commit the post the DB */
     db::new_post(connection, &post)?;
-    
+
     /* Regenerate the blag */
     build::run(args)?;
-    
+
     Ok(String::from(&post))
 }
-

@@ -7,21 +7,21 @@ use clap::ArgMatches;
 use user_error::UserError;
 
 /* Internal Modules */
-use crate::db;
-use crate::web::templates;
-use crate::utility;
 use crate::context::EchoContext;
+use crate::db;
+use crate::utility;
+use crate::web::templates;
 
 /* Build a static web blog from an existing Echo project */
 pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     /* Get the project path to build */
     let (config, connection) = utility::get_project(args.value_of("PATH"))?;
-    
+
     /* Context for generating the Tera templates */
     let mut context = EchoContext {
         config,
         ..Default::default()
-   };
+    };
 
     /* Initialize the context */
     context.posts = db::get_latest(&connection)?;
@@ -35,5 +35,3 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
 
     Ok(context.config.title)
 }
-
-

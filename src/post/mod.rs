@@ -5,6 +5,5 @@ pub struct EchoPost {
     pub id: i64,
     pub created: i64,
     pub edited: i64,
-    pub text: String
+    pub text: String,
 }
-
