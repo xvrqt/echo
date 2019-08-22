@@ -12,8 +12,8 @@ mod web;
 fn main() {
     /* Error Messages */
     const ERROR_FAILED_TO_RUN: &str = "Failed to run";
-    const ERROR_SUBTLY_FAILED_TO_RUN: &str =
-        "You can run 'echo --help' to see a list of all commands and options";
+    const ERROR_SUBTLY_FAILED_TO_RUN: &str = "You can run 'echo --help' to see \
+                                            a list of all commands and options";
 
     match cli::parse().subcommand() {
         ("init", Some(m)) => match subcommands::init::run(m) {
@@ -83,3 +83,4 @@ fn main() {
         }
     }
 }
+
