@@ -1,5 +1,7 @@
+/* Third Party Libraries */
 use serde::{Deserialize, Serialize};
 
+/* Crate Modules */
 use crate::config::EchoConfig;
 use crate::post::EchoPost;
 
@@ -9,3 +11,4 @@ pub struct EchoContext {
     pub num_posts: isize,
     pub posts: Vec<Vec<EchoPost>>,
 }
+
