@@ -1,4 +1,10 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+/* CLI Parsing and dispatching using the Clap library */
+use clap::{
+    App, 
+    Arg, 
+    ArgMatches, 
+    SubCommand
+};
 
 pub fn parse<'a>() -> ArgMatches<'a> {
     App::new("Echo")
@@ -45,3 +51,4 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .help("Specify the path of the Echo project you wish to build.")))
         .get_matches()
 }
+
