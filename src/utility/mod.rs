@@ -2,6 +2,8 @@
 use std::env;
 use std::path::Path;
 use std::path::PathBuf;
+use std::fs::File;
+use std::error::Error;
 
 /* Third Party Libraries */
 use rusqlite::Connection;
@@ -45,6 +47,17 @@ pub fn get_project(path: Option<&str>) -> Result<(EchoConfig, Connection), UserE
     let config = EchoConfig::get()?;
     let connection = db::connect()?;
     Ok((config, connection))
+}
+
+/* Opens a file, similar to fs::File::open() but with the error handling
+   boilerplate included to keep things dry.
+*/
+pub fn open_file<P: AsRef<Path>>(path: P) -> Result<File, UserError> {
+    File::open(&path).map_err(|e| {
+        let summary = path.as_ref().to_str().unwrap_or("<unknown>"); 
+        let summary = format!("Failed to open {}", summary);
+        UserError::hardcoded(&summary, &[e.description()], &[])
+    })
 }
 
 /* Returns the PathBuf to the root of an Echo project starting from the cwd and
