@@ -3,7 +3,7 @@ use tera::{GlobalFn, Tera, Value};
 use user_error::UserError;
 
 /* Internal Modules */
-use crate::context::EchoContext;
+use crate::context::home::EchoHomeContext;
 
 /* Returns a Value::String with the suffix for a date ending */
 fn date_suffix(n: i64) -> Result<Value, tera::Error> {
@@ -36,7 +36,7 @@ fn date_suffix_wrapper() -> GlobalFn {
 }
 
 /* Compiles the index.html and returns it as a String */
-pub fn compile_index(context: &EchoContext) -> Result<String, UserError> {
+pub fn compile_index(context: &EchoHomeContext) -> Result<String, UserError> {
     let template_glob = concat!(env!("CARGO_MANIFEST_DIR"), "/src/web/templates/**/*");
     match Tera::new(template_glob).and_then(|mut t| {
         t.register_function("date_suffix", date_suffix_wrapper());

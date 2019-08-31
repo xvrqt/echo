@@ -46,7 +46,7 @@ pub fn run(args: &ArgMatches) -> Result<(), UserError> {
     let (config, connection) = utility::get_project(args.value_of("PATH"))?;
 
     /* Grab all the posts */
-    let posts = db::get_latest(&connection)?;
+    let posts = db::get_latest(&connection, 1000)?;
     let num_posts = db::num_posts(&connection)?;
 
     /* Flatten vectors */

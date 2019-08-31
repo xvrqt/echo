@@ -7,8 +7,7 @@ use clap::ArgMatches;
 use user_error::UserError;
 
 /* Internal Modules */
-use crate::context::EchoContext;
-use crate::db;
+use crate::context::home::EchoHomeContext;
 use crate::utility;
 use crate::web::templates;
 
@@ -17,21 +16,9 @@ pub fn run(args: &ArgMatches) -> Result<String, UserError> {
     /* Get the project path to build */
     let (config, connection) = utility::get_project(args.value_of("PATH"))?;
 
-    /* Context for generating the Tera templates */
-    let mut context = EchoContext {
-        config,
-        ..Default::default()
-    };
+    /* Generate the home page (index.html) */
+    let c = EchoHomeContext::new(&config, &connection)?;
+    c.write(&"dist/index.html")?;
 
-    /* Initialize the context */
-    context.posts = db::get_latest(&connection)?;
-    context.num_posts = db::num_posts(&connection)?;
-
-    /* Compile Tera templates */
-    let index = templates::compile_index(&context)?;
-
-    /* Write index.html to dist/ */
-    fs::write("dist/index.html", &index)?;
-
-    Ok(context.config.title)
+    Ok(config.title)
 }

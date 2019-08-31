@@ -4,11 +4,17 @@
 use rusqlite::{Connection, ToSql, NO_PARAMS};
 use user_error::UserError;
 
+/* Crate Modules */
 use crate::post::EchoPost;
 
-/* Returns a Connection to the database */
+/* Constants */
+const DATABASE_FILE: &'static str = "echo.db";
+
+/* Returns a Connection to the SQLite database.
+   Assumes you're in the root directory of an Echo project.
+*/
 pub fn connect() -> Result<Connection, UserError> {
-    let db_file_path = "echo.db";
+    let db_file_path = DATABASE_FILE;
     let c = Connection::open(db_file_path)?;
     Ok(c)
 }
@@ -101,8 +107,55 @@ pub fn update_post(c: &Connection, post: EchoPost) -> Result<(), UserError> {
     Ok(())
 }
 
-/* Returns the latest 10 posts */
-pub fn get_latest(c: &Connection) -> Result<Vec<Vec<EchoPost>>, UserError> {
+/* Returns the latest 'num' posts */
+pub fn get_latest(c: &Connection, num: usize) -> Result<Vec<Vec<EchoPost>>, UserError> {
+    type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
+
+    let s = format!("SELECT * FROM posts ORDER BY created DESC LIMIT {}", num);
+    let mut stmt = c.prepare(&s)?;
+    let results = stmt.query_map(NO_PARAMS, |row| {
+        Ok(EchoPost {
+            id: row.get(0)?,
+            created: row.get(1)?,
+            edited: row.get(2)?,
+            text: row.get(3)?,
+        })
+    })?;
+
+    let (posts, errors): (MappedRows, MappedRows) = results.partition(|r| r.is_ok());
+
+    /* Check for errors and concatenate into a single UserError */
+    if !errors.is_empty() {
+        let error = format!("Experienced an error in {} posts", errors.len());
+        let mut ue = UserError::hardcoded("Failed to fetch latest posts", &[&error], &[]);
+        for error in errors {
+            let error = error.err().unwrap().to_string();
+            ue.add_reason(&error);
+        }
+        return Err(ue);
+    }
+
+    /* Unwrap the posts, organize into days */
+    let posts: Vec<EchoPost> = posts.into_iter().map(|p| p.unwrap()).collect();
+    let mut vov_posts: Vec<Vec<EchoPost>> = Vec::with_capacity(posts.len());
+    let mut current_day = 0;
+    for post in posts {
+        let day_created = post.created / (24 * 60 * 60);
+        if day_created != current_day {
+            vov_posts.push(Vec::new());
+            current_day = day_created;
+        }
+        if let Some(v) = vov_posts.last_mut() {
+            v.push(post);
+        }
+    }
+
+    Ok(vov_posts)
+}
+
+
+/* Returns all the posts */
+pub fn get_all(c: &Connection) -> Result<Vec<Vec<EchoPost>>, UserError> {
     type MappedRows = Vec<Result<EchoPost, rusqlite::Error>>;
 
     let mut stmt = c.prepare("SELECT * FROM posts ORDER BY created DESC")?;
