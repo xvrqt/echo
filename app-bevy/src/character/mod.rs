@@ -34,13 +34,18 @@ fn spawn_player(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let mesh = Mesh2dHandle(meshes.add(Circle { radius: 50.0 }));
+    let mesh = Mesh2dHandle(meshes.add(Circle { radius: 10.0 }));
     let color = Color::hsl(0.5, 0.95, 0.8);
     let material = materials.add(color);
     let transform = Transform::from_xyz(0.0, 100.0, 0.0);
 
-    let collider = Collider::circle(50.0);
-    let character_controller = CharacterControllerBundle::new(collider);
+    let collider = Collider::circle(10.0);
+    let character_controller = CharacterControllerBundle::new(collider).with_movement(
+        0.92,
+        400.0,
+        1250.0,
+        (30.0 as Scalar).to_radians(),
+    );
     commands.spawn((
         Player,
         MaterialMesh2dBundle {
@@ -50,5 +55,9 @@ fn spawn_player(
             ..default()
         },
         character_controller,
+        Friction::ZERO.with_combine_rule(CoefficientCombine::Min),
+        Restitution::ZERO.with_combine_rule(CoefficientCombine::Min),
+        ColliderDensity(2.0),
+        GravityScale(1.5),
     ));
 }

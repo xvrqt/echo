@@ -113,12 +113,12 @@ impl CharacterControllerBundle {
     // Update the how a character moves
     pub fn with_movement(
         mut self,
-        acceleration: Scalar,
         damping: Scalar,
+        acceleration: Scalar,
         jump_impulse: Scalar,
         max_slope_angle: Scalar,
     ) -> Self {
-        self.movement = MovementBundle::new(acceleration, damping, jump_impulse, max_slope_angle);
+        self.movement = MovementBundle::new(damping, jump_impulse, acceleration, max_slope_angle);
         self
     }
 }
