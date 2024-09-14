@@ -8,6 +8,7 @@ bevy = { workspace = true }
 log = { workspace = true }
 lib-utils = { path = "../lib-utils" }
 float-ord = "0.3.2"
+avian2d = "0.1.2"
 
 [features]
 default = ["bevy/dynamic_linking", "bevy/wayland"]

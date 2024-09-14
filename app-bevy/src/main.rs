@@ -1,21 +1,20 @@
+use avian2d::{math::*, prelude::*};
 use bevy::diagnostic::FrameTimeDiagnosticsPlugin;
 use bevy::prelude::*;
 
 mod character;
-use character::CharacterPlugin;
+use character::PlayerPlugin;
 
 mod camera;
 use camera::CameraPlugin;
-
-mod physics;
-use physics::PhysicsPlugin;
 
 fn main() {
     let mut app = App::new();
     app.add_plugins(DefaultPlugins)
         .add_plugins(CameraPlugin)
-        .add_plugins(CharacterPlugin)
-        .add_plugins(PhysicsPlugin);
+        .add_plugins(PlayerPlugin)
+        .insert_resource(ClearColor(Color::srgb(0.05, 0.05, 0.1)))
+        .insert_resource(Gravity(Vector::NEG_Y * 1000.0));
 
     // Debug Builds Only
     #[cfg(debug_assertions)]
