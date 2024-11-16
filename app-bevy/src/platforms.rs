@@ -91,7 +91,7 @@ fn setup_platforms(
                 custom_size: Some(Vec2::new(30.0, 30.0)),
                 ..default()
             },
-            transform: Transform::from_xyz(50.0, -100.0, 0.0),
+            transform: Transform::from_xyz(50.0, -90.0, 0.0),
             ..default()
         },
         RigidBody::Dynamic,

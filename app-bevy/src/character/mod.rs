@@ -1,7 +1,8 @@
 use avian2d::{math::*, prelude::*};
 use bevy::{
     prelude::*,
-    sprite::{MaterialMesh2dBundle, Mesh2dHandle, Wireframe2dConfig, Wireframe2dPlugin},
+    render::render_resource::{AsBindGroup, ShaderRef},
+    sprite::{Material2d, Material2dPlugin, MaterialMesh2dBundle, Mesh2dHandle},
 };
 
 // Character Movement & Physics
@@ -23,9 +24,31 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         // 20px is 1 "meter" for simulation purposes
         let physics = PhysicsPlugins::default().with_length_unit(20.0);
+        let cm = Material2dPlugin::<CoolMaterial>::default();
         app.add_plugins(physics)
+            .add_plugins(cm)
             .add_plugins(CharacterControllerPlugin)
             .add_systems(Startup, spawn_player);
+    }
+}
+
+#[derive(AsBindGroup, Clone, Debug, Asset, TypePath)]
+pub struct CoolMaterial {
+    #[uniform(0)]
+    color: LinearRgba,
+}
+
+impl Material2d for CoolMaterial {
+    fn fragment_shader() -> ShaderRef {
+        "shaders/cool.wgsl".into()
+    }
+}
+
+impl Default for CoolMaterial {
+    fn default() -> Self {
+        Self {
+            color: LinearRgba::new(1.0, 0.05, 0.9, 1.0),
+        }
     }
 }
 
@@ -33,11 +56,12 @@ impl Plugin for PlayerPlugin {
 fn spawn_player(
     mut meshes: ResMut<Assets<Mesh>>,
     mut commands: Commands,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut materials: ResMut<Assets<CoolMaterial>>,
 ) {
     let mesh = Mesh2dHandle(meshes.add(Circle { radius: 10.0 }));
-    let color = Color::hsl(0.5, 0.95, 0.8);
-    let material = materials.add(color);
+    // let color = Color::hsl(0.5, 0.95, 0.8);
+    let cool_material = CoolMaterial::default();
+    let material = materials.add(cool_material);
     let transform = Transform::from_xyz(0.0, 100.0, 0.0);
 
     let collider = Collider::circle(10.0);

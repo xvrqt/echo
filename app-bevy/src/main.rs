@@ -3,7 +3,7 @@ use bevy::{
     diagnostic::FrameTimeDiagnosticsPlugin,
     prelude::*,
     render::{render_asset::RenderAssetUsages, render_resource::PrimitiveTopology},
-    sprite::MaterialMesh2dBundle,
+    sprite::{Material2dPlugin, MaterialMesh2dBundle},
 };
 
 mod camera;
